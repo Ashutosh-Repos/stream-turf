@@ -27,11 +27,11 @@ export const GET = async (
     );
 
     const query = parameters.get("query") || null;
-    const sortBy = parameters.get("sortBy") || "createdAt";
+    //const sortBy = parameters.get("sortBy") || "createdAt";
     const sortOrder =
       parameters.get("sortType")?.toLowerCase() === "asc" ? 1 : -1;
     const skip = (page - 1) * limit;
-    const filter: Record<string, any> = { owner: id, public: true };
+    const filter: Record<string, unknown> = { owner: id, public: true };
     if (query) {
       filter.$or = [
         { title: { $regex: query, $options: "i" } },

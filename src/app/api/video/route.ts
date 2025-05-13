@@ -12,11 +12,11 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
     const page = Number(params.get("page")) || 1;
     const limit = Number(params.get("limit")) || 10;
     const query = params.get("query") || null;
-    const sortBy = params.get("sortBy") || "createdAt";
+    //const sortBy = params.get("sortBy") || "createdAt";
     const sortOrder =
       (params.get("sortType")?.toLowerCase() === "asc" ? 1 : -1) || -1;
     const skip = (page - 1) * limit;
-    const filter: Record<string, any> = {};
+    const filter: Record<string, unknown> = {};
     if (query) {
       filter.$or = [
         { title: { $regex: query, $options: "i" } },

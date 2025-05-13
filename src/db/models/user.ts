@@ -84,6 +84,8 @@ const UserSchema: Schema<Iuser> = new Schema(
     },
     avatar: {
       type: String,
+      default:
+        "https://res.cloudinary.com/da8wropwc/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1746776657/20250506_0935_Anime_Style_Portrait_remix_01jthw8rfnes0tvsa3q8tp6vag_puoeiw.jpg",
     },
     cover: {
       type: String,

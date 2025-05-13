@@ -50,13 +50,6 @@ const Login = () => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="w-full max-w-96 gap-4 flex flex-col h-max p-4 border-0 rounded-2xl relative bg-zinc-200 dark:bg-zinc-900 backdrop-blur-sm"
         >
-          {/* <GlowingEffect
-            spread={40}
-            glow={true}
-            disabled={false}
-            proximity={64}
-            inactiveZone={0.01}
-          /> */}
           <h1 className="w-full text-center text-xl font-bold">Login</h1>
 
           <div className="w-full h-8 flex items-center justify-evenly">

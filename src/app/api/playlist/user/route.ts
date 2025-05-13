@@ -21,11 +21,11 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
     );
 
     const query = parameters.get("query") || null;
-    const sortBy = parameters.get("sortBy") || "createdAt";
+    //const sortBy = parameters.get("sortBy") || "createdAt";
     const sortOrder =
       parameters.get("sortType")?.toLowerCase() === "asc" ? 1 : -1;
     const skip = (page - 1) * limit;
-    const filter: Record<string, any> = {
+    const filter: Record<string, unknown> = {
       owner: new mongoose.Types.ObjectId(id),
     };
     if (query) {
@@ -263,7 +263,7 @@ export const POST = async (request: NextRequest) => {
       { status: 200 }
     );
   } catch (error: unknown) {
-    const errorResponse = (msg: string, status = 500, details?: any) =>
+    const errorResponse = (msg: string, status = 500, details?: unknown) =>
       NextResponse.json({ success: false, error: msg, details }, { status });
 
     if (error instanceof ZodError) {

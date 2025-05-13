@@ -25,8 +25,18 @@ declare module "next-auth" {
 
   interface User {
     id: string;
-    username: string;
+    username: string | undefined;
     email: string;
+    verified: boolean;
+    avatar?: string | undefined;
+  }
+
+  interface JWT {
+    id: string;
+    username: string | undefined;
+    email: string;
+    verified: boolean;
+    avatar?: string | undefined;
   }
 }
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -42,7 +52,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         identifier: { label: "Email or Username", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      authorize: async (credentials) => {
+      authorize: async (
+        credentials: Partial<Record<"identifier" | "password", unknown>>
+      ) => {
         try {
           if (
             typeof credentials?.identifier !== "string" ||
@@ -86,6 +98,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             email: user.email as string,
             username: user.username as string,
             id: user._id.toString() as string,
+            verified: user.verified as boolean,
           };
 
           console.log("8");
@@ -103,10 +116,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
-  // pages: {
-  //   signIn: "/login",
-  //   signOut: "/login",
-  // },
+  pages: {
+    signIn: "/login",
+    signOut: "/login",
+  },
   callbacks: {
     async redirect({ baseUrl }) {
       return baseUrl; // ✅ this is correct
@@ -115,6 +128,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (token && session.user) {
         session.user.id = token.id as string;
         session.user.username = token.username as string;
+        session.user.email = token.email as string;
+        session.user.verified = token.verified as boolean;
       }
       return session;
     },
@@ -122,13 +137,62 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (user) {
         token.id = (user as User).id;
         token.username = (user as User).username;
+        token.email = (user as User).email;
+        token.verified = (user as User).verified;
       }
       return token;
     },
+
+    async signIn({ user, account }) {
+      if (!account) return false;
+
+      if (account.provider === "credentials") {
+        // Skip registration logic for credentials
+        return true;
+      }
+
+      // OAuth logic (Google, GitHub, etc.)
+      await connectToDatabase();
+
+      const existingUser = await userModel.findOne({ email: user.email });
+
+      if (!existingUser) {
+        const newUser = await userModel.create({
+          email: user.email,
+          username: null,
+          password: null,
+          verified: true,
+          // optionally set avatar or other fields here
+        });
+        if (!newUser) return false;
+
+        user.email = newUser.email;
+        user.id = newUser.id;
+        user.username = newUser.username;
+        user.verified = newUser.verified;
+        user.avatar = newUser.avatar;
+
+        return true;
+      }
+
+      user.email = existingUser.email;
+      user.id = existingUser.id;
+      user.username = existingUser.username;
+      user.verified = existingUser.verified;
+      user.avatar = existingUser.avatar;
+
+      console.log(user);
+
+      return true;
+    },
+    // authorized: async ({ auth }) => {
+    //   return !!auth;
+    // },
   },
   session: {
     strategy: "jwt",
-    maxAge: 60,
+    maxAge: 60 * 24 * 24,
   },
+
   secret: process.env.AUTH_SECRET,
 });

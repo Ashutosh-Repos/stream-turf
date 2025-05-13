@@ -10,17 +10,17 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
     await connectToDatabase();
 
     const params = request.nextUrl.searchParams;
-    const page = Number(params.get("page")) || 1;
-    const limit = Number(params.get("limit")) || 10;
+    //const page = Number(params.get("page")) || 1;
+    //const limit = Number(params.get("limit")) || 10;
     const query = params.get("query") || null;
-    const sortBy = params.get("sortBy") || "createdAt";
-    const sortType = params.get("sortType")?.toLowerCase() === "asc" ? 1 : -1;
+    //const sortBy = params.get("sortBy") || "createdAt";
+    //const sortType = params.get("sortType")?.toLowerCase() === "asc" ? 1 : -1;
     const id = params.get("id") || "";
 
     if (!id || id.trim() == "" || id == "")
       throw new Error("Unable to get user ID");
 
-    const filter: Record<string, any> = {};
+    const filter: Record<string, unknown> = {};
     if (query) {
       filter.$or = [
         { title: { $regex: query, $options: "i" } },

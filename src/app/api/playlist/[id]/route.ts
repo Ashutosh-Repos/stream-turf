@@ -162,7 +162,7 @@ export const PATCH = async (
       { status: 200 }
     );
   } catch (error: unknown) {
-    const errorResponse = (msg: string, status = 500, details?: any) =>
+    const errorResponse = (msg: string, status = 500, details?: unknown) =>
       NextResponse.json({ success: false, error: msg, details }, { status });
 
     if (error instanceof ZodError) {
